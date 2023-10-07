@@ -1,0 +1,43 @@
+#+TITLE: Hijack a session
+#+AUTHOR: [[https://github.com/touhidulshawan][Touhidul Shawan]]
+#+DESCRIPTION: Solution notes of hijack a session of broken access control from webgoat machine
+#+DATE: 2023-10-07 Sat
+#+OPTIONS: toc:2
+
+* Table of Contents :toc:
+- [[#problem-description][Problem description]]
+- [[#goal][Goal]]
+- [[#solution][Solution]]
+
+* Problem description
+Application developers who develop their own session IDs frequently forget to incorporate the complexity and randomness necessary for security. If the user specific session ID is not complex and random, then the application is highly susceptible to session-based brute force attacks.
+* Goal
+Gain access to an unauthenticated session belonging to someone else
+* Solution
+1. Access lab & start burpsuite
+2. Click on =Access= button & observe the request [ex: in http history of burp]
+3. make request to this endpoint =POST /WebGoat/HijackSession/login=
+4. This request set a cookie value =hijack_cookie=416814979312783902-1696672167996=
+5. Now send this request to burp sequencer & make sure in token location within response option it set to Cookie with =hijack_cookie=416814979312783902-1696672167996= value
+6. Start the live capture & capture around 500 to 600 tokens. It will be more than enough
+7. Save tokens on the machine and sort them.
+8. Look at those tokens to findout the anomalies
+9. For example, here is two tokens
+   |----------------------------------+----------------------------------|
+   | 416814979312784870-1696672386890 | 416814979312784872-1696672386895 |
+   |----------------------------------+----------------------------------|
+For two tokens in first part the last two digit we can see it is 70 & 72, so maybe other session will be 71. Now for last part the last two digit number is 90 & 95. So we can brute force it with number range 90 to 95. Tokens will be like
+|----------------------------------|
+| 416814979312784871-1696672386890 |
+|----------------------------------|
+| 416814979312784871-1696672386891 |
+|----------------------------------|
+| 416814979312784871-1696672386892 |
+|----------------------------------|
+| 416814979312784871-1696672386893 |
+|----------------------------------|
+| 416814979312784871-1696672386894 |
+|----------------------------------|
+| 416814979312784871-1696672386895 |
+|----------------------------------|
+Send this request & brute force the to get another session. If not success then try with another sequence from tokens

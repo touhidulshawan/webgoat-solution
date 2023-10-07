@@ -1,0 +1,57 @@
+#+TITLE: Insecure Direct Object References aka IDOR
+#+AUTHOR: [[https://github.com/touhidulshawan][Touhidul Shawan]]
+#+DESCRIPTION: Solution notes of IDOR of Broken Access Control from webgoat 
+#+DATE: 2023-10-07 Sat
+#+OPTIONS: toc:2
+
+* Table of Contents :toc:
+- [[#authenticate-first][Authenticate First]]
+- [[#observing-differences--behaviors][Observing Differences & Behaviors]]
+- [[#guessing--predicting-patterns][Guessing & Predicting Patterns]]
+- [[#playing-with-the-patterns][Playing with the Patterns]]
+  - [[#view-another-profile][View another profile]]
+  - [[#edit-another-profile][Edit another profile]]
+
+* Authenticate First 
+login with user: =tom= & pass: =cat=
+* Observing Differences & Behaviors
+Click on =View Profile= and observe the response on burpsuite
+#+begin_src json
+{
+  "role" : 3,
+  "color" : "yellow",
+  "size" : "small",
+  "name" : "Tom Cat",
+  "userId" : "2342384"
+}
+#+end_src
+On webpage there is only three property we can see color, name, size. But in response we can see two additional values =role= & =userId=
+* Guessing & Predicting Patterns
+From previous question we can view our profile onclick View profile button. It makes the request to this endpoint =/WebGoat/IDOR/profile= Now we can make a RESTful api call directly to view our profile if we know our userId.
+Example: =/WebGoat/IDOR/profile/2342384=
+* Playing with the Patterns
+** View another profile
+click on the view profile button and observe the request in burpsuite. it makes a request to this endpoint
+=/WebGoat/IDOR/profile/%7BuserId%7D= this is encoded. Decode value of this =/WebGoat/IDOR/profile/{userId}=. So we can replace with userId with random id to see if we can view another user profile. Send this request to repeater and play with random id. [For me: =2342388= ]
+** Edit another profile
+using the same endpoint =/WebGoat/IDOR/profile/2342388= edit the profile of another user's data[Buffalo bill's data].
+Change two property of this user
+ - role: something lower value
+ - color: red
+ -
+*** Solution
+- Change the previous request methods
+- =POST= methods give 405 Method not Allowed Error
+- =PUT= methods gives 415 Unsupported Media Type error. Change =Content-Type: application/json=
+- add this to the request body and the request
+ #+begin_src json
+{
+  "role" : 1,
+  "color" : "red",
+  "size":"large",
+  "name":"Buffalo Bill",
+  "userId":2342388
+}
+#+end_src
+ 
+

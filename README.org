@@ -1,0 +1,13 @@
+#+TITLE: README
+#+AUTHOR: [[https://github.com/touhidulshawan][Touhidul Shawan]]
+#+DESCRIPTION: README file for summery 
+#+DATE: 2023-10-07 Sat
+#+OPTIONS: toc:2
+
+This repo contains the solution steps to solve the Owasp [[https://github.com/WebGoat/WebGoat][Webgoat]] machine
+
+* (A1) Broken Access Control
++ [[./broken-access-control/hijack-session.org][Hijeck a Session]]
++ [[./broken-access-control/idor.org][Insecure Direct Object References]]
++ [[./broken-access-control/MFLAC.org][Missing Function Lavel Access Control]]
++ [[./broken-access-control/authentication-cookie.org][Spoofing an Authentication Cookie]]

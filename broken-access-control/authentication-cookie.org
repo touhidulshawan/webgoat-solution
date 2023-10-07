@@ -1,0 +1,23 @@
+#+TITLE: Spoofing an Authentication Cookie
+#+AUTHOR: [[https://github.com/touhidulshawan][Touhidul Shawan]]
+#+DESCRIPTION: Notes to solve Spoofing an Authentication Cookie of Broken Access Control from Webgoat 
+#+DATE: 2023-10-07 Sat
+#+OPTIONS: toc:2
+
+* Table of Contents :toc:
+- [[#goal][Goal]]
+- [[#solution][Solution]]
+
+* Goal
+Understand how authentication cookie is generated then try to spoof the authentication cookie and login as =Tom=
+*** Known credentials
+| username | password |
+|----------+----------|
+| webgoat  | webgoat  |
+| admin    | admin    |
+* Solution
+Login with these credentials and observe those cookies
+1. Decode cookie with base64 decoder [result something like] -> =574f524a4f75707053536e696d6461=
+2. Decode this hex value to text [result something like] -> =WORJOuppSSnimda=
+3. Now reverse this text [result something like] -> =adminSSppuOJROW=
+4. Now replace =admin= with =Tom= and do above steps reversely to get =spoof_auth= cookie for =Tom=
